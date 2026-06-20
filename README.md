@@ -1,6 +1,6 @@
 # Train Ticket Booking System
 
-A simple console-based Train Ticket Booking System developed in C++.
+A simple console-based Train Ticket Booking System developed in C++. 
 
 ## Features
 - Display available trains
