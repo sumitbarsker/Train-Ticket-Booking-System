@@ -6,7 +6,7 @@ A simple console-based Train Ticket Booking System developed in C++.
 - Display available trains
 - Book train tickets
 - Cancel booked tickets
-- Track total booked tickets
+- Track total booked tickets 
 - Menu-driven interface
 
 ## Technologies Used
