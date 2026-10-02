@@ -29,7 +29,16 @@ class Train(Base):
     duration = Column(String(20), nullable=False)
 
     price = Column(Integer, nullable=False)
+
+    # Legacy/general seat field
     seats = Column(Integer, nullable=False)
+
+    # Total capacity of the train
+    total_seats = Column(
+        Integer,
+        nullable=False,
+        default=60,
+    )
 
     train_class = Column(String(20), nullable=False)
     train_type = Column(String(50), nullable=False)
@@ -87,7 +96,6 @@ class Booking(Base):
         nullable=False,
     )
 
-    # Journey date for this booking
     journey_date = Column(
         Date,
         nullable=False,
