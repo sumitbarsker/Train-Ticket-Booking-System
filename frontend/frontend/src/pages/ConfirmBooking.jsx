@@ -1,3 +1,5 @@
+import { useState } from "react";
+import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -5,10 +7,10 @@ import {
   TrainFront,
   User,
   CreditCard,
-  CalendarDays,
-  MapPin,
   Armchair,
 } from "lucide-react";
+
+const API_URL = "http://127.0.0.1:8000";
 
 function ConfirmBooking() {
   const navigate = useNavigate();
@@ -18,17 +20,18 @@ function ConfirmBooking() {
   const seat = location.state?.seat;
   const passenger = location.state?.passenger;
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   if (!train || !seat || !passenger) {
     return (
       <main className="confirm-page">
         <div className="empty-state">
           <TrainFront size={42} />
-
           <h2>Booking information not found</h2>
-
           <p>
-            Please complete the train, seat and passenger
-            selection before confirming your booking.
+            Please complete the train, seat and passenger selection
+            before confirming your booking.
           </p>
 
           <button
@@ -42,14 +45,43 @@ function ConfirmBooking() {
     );
   }
 
-  const handleConfirmBooking = () => {
-    navigate("/booking-success", {
-      state: {
-        train,
-        seat,
-        passenger,
-      },
-    });
+  const handleConfirmBooking = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/bookings/`,
+        {
+          train_id: train.id,
+          seat: seat,
+          passenger_name: passenger.name,
+          age: Number(passenger.age),
+          gender: passenger.gender,
+          mobile: passenger.mobile,
+          email: passenger.email,
+        }
+      );
+
+      navigate("/booking-success", {
+        state: {
+          train,
+          seat,
+          passenger,
+          booking: response.data.booking,
+        },
+      });
+    } catch (requestError) {
+      console.error("Booking failed:", requestError);
+
+      const message =
+        requestError.response?.data?.detail ||
+        "Unable to confirm booking. Please try again.";
+
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -64,15 +96,10 @@ function ConfirmBooking() {
         </button>
 
         <div>
-          <span className="small-label">
-            STEP 3 OF 3
-          </span>
-
+          <span className="small-label">STEP 3 OF 3</span>
           <h1>Confirm Your Booking</h1>
-
           <p>
-            Review your journey and passenger details before
-            confirming.
+            Review your journey and passenger details before confirming.
           </p>
         </div>
       </div>
@@ -86,10 +113,7 @@ function ConfirmBooking() {
 
             <div>
               <h2>Review Booking</h2>
-
-              <p>
-                Please verify all the details below.
-              </p>
+              <p>Please verify all the details below.</p>
             </div>
           </div>
 
@@ -196,10 +220,7 @@ function ConfirmBooking() {
             <CreditCard size={23} />
           </div>
 
-          <span className="small-label">
-            FARE SUMMARY
-          </span>
-
+          <span className="small-label">FARE SUMMARY</span>
           <h2>Booking Total</h2>
 
           <div className="fare-row">
@@ -224,25 +245,31 @@ function ConfirmBooking() {
             <strong>₹{train.price}</strong>
           </div>
 
+          {error && (
+            <div className="booking-error">
+              {error}
+            </div>
+          )}
+
           <div className="secure-note">
             <CheckCircle2 size={16} />
-
-            <span>
-              Secure booking confirmation
-            </span>
+            <span>Secure booking confirmation</span>
           </div>
 
           <button
             className="confirm-booking-btn"
             onClick={handleConfirmBooking}
+            disabled={loading}
           >
             <CheckCircle2 size={18} />
-            Confirm Booking
+
+            {loading
+              ? "Confirming Booking..."
+              : "Confirm Booking"}
           </button>
 
           <p className="payment-note">
-            This is a demo booking system. No real payment
-            will be processed.
+            This is a demo booking system. No real payment will be processed.
           </p>
         </aside>
       </div>
