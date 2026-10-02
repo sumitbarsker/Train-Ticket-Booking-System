@@ -1,1 +1,99 @@
+from fastapi import APIRouter
 
+router = APIRouter(
+    prefix="/trains",
+    tags=["Trains"],
+)
+
+
+trains = [
+    {
+        "id": 1,
+        "name": "Bhopal Express",
+        "number": "12156",
+        "source": "Bhopal",
+        "destination": "New Delhi",
+        "departure": "20:10",
+        "arrival": "05:45",
+        "duration": "09h 35m",
+        "price": 850,
+        "seats": 42,
+        "class": "3A",
+        "type": "Express",
+    },
+    {
+        "id": 2,
+        "name": "Shatabdi Express",
+        "number": "12002",
+        "source": "Bhopal",
+        "destination": "New Delhi",
+        "departure": "06:00",
+        "arrival": "14:25",
+        "duration": "08h 25m",
+        "price": 1250,
+        "seats": 18,
+        "class": "CC",
+        "type": "Superfast",
+    },
+    {
+        "id": 3,
+        "name": "Rajdhani Express",
+        "number": "12434",
+        "source": "Bhopal",
+        "destination": "New Delhi",
+        "departure": "16:55",
+        "arrival": "23:50",
+        "duration": "06h 55m",
+        "price": 1450,
+        "seats": 27,
+        "class": "2A",
+        "type": "Rajdhani",
+    },
+    {
+        "id": 4,
+        "name": "Malwa Express",
+        "number": "12919",
+        "source": "Indore",
+        "destination": "New Delhi",
+        "departure": "17:30",
+        "arrival": "08:10",
+        "duration": "14h 40m",
+        "price": 920,
+        "seats": 36,
+        "class": "3A",
+        "type": "Express",
+    },
+    {
+        "id": 5,
+        "name": "Intercity Express",
+        "number": "12198",
+        "source": "Bhopal",
+        "destination": "Jabalpur",
+        "departure": "07:15",
+        "arrival": "12:40",
+        "duration": "05h 25m",
+        "price": 550,
+        "seats": 51,
+        "class": "CC",
+        "type": "Intercity",
+    },
+]
+
+
+@router.get("/")
+def get_trains():
+    return {
+        "count": len(trains),
+        "trains": trains,
+    }
+
+
+@router.get("/{train_id}")
+def get_train(train_id: int):
+    for train in trains:
+        if train["id"] == train_id:
+            return train
+
+    return {
+        "error": "Train not found"
+    }
