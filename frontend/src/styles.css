@@ -2197,3 +2197,30 @@ footer p {
     color: #6b7280;
   }
 }
+.ai-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  color: #c7d2fe;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ai-reason svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #a78bfa;
+}
+
+.ai-reason span {
+  flex: 1;
+}
+
+.recommendation-card .ai-score {
+  min-width: 78px;
+}
