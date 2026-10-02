@@ -7,7 +7,6 @@ import random
 from backend.database import get_db
 from backend.models import Train, Passenger, Booking
 
-
 router = APIRouter(
     prefix="/bookings",
     tags=["Bookings"],
@@ -37,6 +36,7 @@ def create_booking(
     booking_data: BookingRequest,
     db: Session = Depends(get_db),
 ):
+    # Find train
     train = (
         db.query(Train)
         .filter(Train.id == booking_data.train_id)
@@ -49,12 +49,31 @@ def create_booking(
             detail="Train not found",
         )
 
+    # Check available seats
     if train.seats <= 0:
         raise HTTPException(
             status_code=400,
             detail="No seats available",
         )
 
+    # Check whether selected seat is already booked
+    existing_booking = (
+        db.query(Booking)
+        .filter(
+            Booking.train_id == booking_data.train_id,
+            Booking.seat == booking_data.seat,
+            Booking.status == "Confirmed",
+        )
+        .first()
+    )
+
+    if existing_booking:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Seat {booking_data.seat} is already booked",
+        )
+
+    # Create passenger
     passenger = Passenger(
         name=booking_data.passenger_name,
         age=booking_data.age,
@@ -66,6 +85,7 @@ def create_booking(
     db.add(passenger)
     db.flush()
 
+    # Create booking
     booking = Booking(
         pnr=generate_pnr(),
         booking_id=generate_booking_id(),
@@ -76,6 +96,7 @@ def create_booking(
         booked_at=datetime.utcnow(),
     )
 
+    # Decrease available seat count
     train.seats -= 1
 
     db.add(booking)
