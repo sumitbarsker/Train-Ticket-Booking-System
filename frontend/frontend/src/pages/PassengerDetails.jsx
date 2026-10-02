@@ -1,15 +1,14 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
-  Check,
+  CalendarDays,
+  CheckCircle2,
   Mail,
   Phone,
   ShieldCheck,
-  TrainFront,
   User,
-  Users,
 } from "lucide-react";
 
 function PassengerDetails() {
@@ -21,42 +20,26 @@ function PassengerDetails() {
     from,
     to,
     date,
-    selectedSeats = [],
-    totalFare = 0,
+    seats = [],
+    seatClass = "3A",
+    totalAmount = 0,
   } = location.state || {};
 
-  const [passengers, setPassengers] =
-    useState(() =>
-      selectedSeats.map((seat, index) => ({
-        seat,
-        name: "",
-        age: "",
-        gender: "",
-      }))
-    );
+  const [passengers, setPassengers] = useState(
+    seats.map((seat, index) => ({
+      seat,
+      name: "",
+      age: "",
+      gender: "",
+    }))
+  );
 
   const [contact, setContact] = useState({
-    mobile: "",
     email: "",
+    phone: "",
   });
 
   const [errors, setErrors] = useState({});
-
-  const serviceCharge =
-    selectedSeats.length > 0 ? 20 : 0;
-
-  const finalAmount =
-    totalFare + serviceCharge;
-
-  const isValidMobile = (mobile) => {
-    return /^[6-9]\d{9}$/.test(mobile);
-  };
-
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-      email
-    );
-  };
 
   const updatePassenger = (
     index,
@@ -73,26 +56,12 @@ function PassengerDetails() {
           : passenger
       )
     );
-
-    setErrors((current) => ({
-      ...current,
-      [`passenger-${index}-${field}`]:
-        "",
-    }));
   };
 
-  const updateContact = (
-    field,
-    value
-  ) => {
+  const updateContact = (field, value) => {
     setContact((current) => ({
       ...current,
       [field]: value,
-    }));
-
-    setErrors((current) => ({
-      ...current,
-      [field]: "",
     }));
   };
 
@@ -101,60 +70,56 @@ function PassengerDetails() {
 
     passengers.forEach(
       (passenger, index) => {
-        if (
-          !passenger.name.trim()
-        ) {
-          newErrors[
-            `passenger-${index}-name`
-          ] = "Enter passenger name.";
+        if (!passenger.name.trim()) {
+          newErrors[`name-${index}`] =
+            "Enter passenger name.";
         }
 
         if (!passenger.age) {
-          newErrors[
-            `passenger-${index}-age`
-          ] = "Enter passenger age.";
+          newErrors[`age-${index}`] =
+            "Enter passenger age.";
         } else if (
           Number(passenger.age) < 1 ||
           Number(passenger.age) > 120
         ) {
-          newErrors[
-            `passenger-${index}-age`
-          ] = "Enter a valid age.";
+          newErrors[`age-${index}`] =
+            "Enter a valid age.";
         }
 
         if (!passenger.gender) {
-          newErrors[
-            `passenger-${index}-gender`
-          ] = "Select gender.";
+          newErrors[`gender-${index}`] =
+            "Select gender.";
         }
       }
     );
 
-    if (!contact.mobile) {
-      newErrors.mobile =
-        "Enter mobile number.";
-    } else if (
-      !isValidMobile(contact.mobile)
-    ) {
-      newErrors.mobile =
-        "Enter a valid 10-digit mobile number.";
-    }
-
-    if (!contact.email) {
+    if (!contact.email.trim()) {
       newErrors.email =
-        "Enter email address.";
+        "Enter your email address.";
     } else if (
-      !isValidEmail(contact.email)
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        contact.email
+      )
     ) {
       newErrors.email =
         "Enter a valid email address.";
     }
 
+    if (!contact.phone.trim()) {
+      newErrors.phone =
+        "Enter your mobile number.";
+    } else if (
+      !/^[6-9]\d{9}$/.test(
+        contact.phone
+      )
+    ) {
+      newErrors.phone =
+        "Enter a valid 10-digit mobile number.";
+    }
+
     setErrors(newErrors);
 
-    return (
-      Object.keys(newErrors).length === 0
-    );
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleContinue = () => {
@@ -162,50 +127,43 @@ function PassengerDetails() {
       return;
     }
 
-    navigate(
-      "/confirm-booking",
-      {
-        state: {
-          train,
-          from,
-          to,
-          date,
-          selectedSeats,
-          passengers,
-          contact,
-          totalFare,
-          serviceCharge,
-          finalAmount,
-        },
-      }
-    );
+    navigate("/confirm-booking", {
+      state: {
+        train,
+        from,
+        to,
+        date,
+        seats,
+        seatClass,
+        passengers,
+        contact,
+        totalAmount:
+          totalAmount +
+          (seats.length ? 20 : 0),
+      },
+    });
   };
 
-  const passengerCountText =
-    selectedSeats.length === 1
-      ? "1 passenger"
-      : `${selectedSeats.length} passengers`;
-
-  if (!train) {
+  if (!train || seats.length === 0) {
     return (
-      <main className="passenger-page">
+      <main className="booking-page">
         <section className="empty-results">
-          <TrainFront size={48} />
+          <User size={46} />
 
-          <h2>
-            Booking information not found
-          </h2>
+          <h2>Passenger details unavailable</h2>
 
           <p>
-            Please select a train and seats
-            again.
+            Please select seats before entering
+            passenger details.
           </p>
 
           <button
             className="primary-btn"
-            onClick={() => navigate("/")}
+            onClick={() =>
+              navigate("/")
+            }
           >
-            Back to Search
+            Start Booking
           </button>
         </section>
       </main>
@@ -213,8 +171,8 @@ function PassengerDetails() {
   }
 
   return (
-    <main className="passenger-page">
-      <section className="passenger-header">
+    <main className="booking-page">
+      <section className="booking-hero">
         <button
           className="back-btn"
           onClick={() => navigate(-1)}
@@ -223,285 +181,286 @@ function PassengerDetails() {
           Back to Seats
         </button>
 
-        <div className="passenger-header-content">
+        <div className="booking-heading">
           <div>
             <span className="section-label">
-              STEP 2 OF 4
+              STEP 2 OF 3
             </span>
 
             <h1>Passenger Details</h1>
 
             <p>
-              Enter the details of all passengers
-              travelling with you.
+              Enter the details of every passenger
+              travelling on this ticket.
             </p>
           </div>
 
-          <div className="seat-step-indicator">
-            <div className="step completed">
+          <div className="booking-train-card">
+            <div className="train-icon">
+              <User size={22} />
+            </div>
+
+            <div>
+              <strong>
+                {passengers.length} Passenger
+                {passengers.length !== 1
+                  ? "s"
+                  : ""}
+              </strong>
+
               <span>
-                <Check size={14} />
+                {train.name} · {seatClass}
               </span>
-              <small>Seats</small>
-            </div>
-
-            <div className="step-line active"></div>
-
-            <div className="step active">
-              <span>2</span>
-              <small>Passenger</small>
-            </div>
-
-            <div className="step-line"></div>
-
-            <div className="step">
-              <span>3</span>
-              <small>Confirm</small>
-            </div>
-
-            <div className="step-line"></div>
-
-            <div className="step">
-              <span>4</span>
-              <small>Ticket</small>
             </div>
           </div>
         </div>
       </section>
 
+      <section className="step-indicator">
+        <div className="step completed">
+          <span>
+            <CheckCircle2 size={15} />
+          </span>
+          <strong>Seats</strong>
+        </div>
+
+        <div className="step-line active"></div>
+
+        <div className="step active">
+          <span>2</span>
+          <strong>Passenger</strong>
+        </div>
+
+        <div className="step-line"></div>
+
+        <div className="step">
+          <span>3</span>
+          <strong>Confirm</strong>
+        </div>
+      </section>
+
+      <section className="journey-summary">
+        <div className="journey-summary-route">
+          <div>
+            <span>FROM</span>
+            <strong>{from}</strong>
+          </div>
+
+          <ArrowRight size={20} />
+
+          <div>
+            <span>TO</span>
+            <strong>{to}</strong>
+          </div>
+        </div>
+
+        <div className="journey-summary-date">
+          <CalendarDays size={18} />
+
+          <div>
+            <span>Journey Date</span>
+            <strong>{date}</strong>
+          </div>
+        </div>
+
+        <div className="journey-summary-info">
+          <span>Seats</span>
+
+          <strong>
+            {seats.join(", ")}
+          </strong>
+        </div>
+      </section>
+
       <section className="passenger-layout">
         <div className="passenger-main">
-          <div className="form-card">
-            <div className="form-card-header">
-              <div className="form-card-icon">
-                <Users size={21} />
-              </div>
+          <div className="passenger-section-header">
+            <div>
+              <span className="section-label">
+                PASSENGER INFORMATION
+              </span>
 
-              <div>
-                <span className="section-label">
-                  PASSENGERS
-                </span>
+              <h2>Travellers</h2>
 
-                <h2>
-                  Passenger information
-                </h2>
-
-                <p>
-                  {passengerCountText} selected
-                </p>
-              </div>
+              <p>
+                Make sure the details match the
+                passenger's valid ID.
+              </p>
             </div>
+          </div>
 
-            <div className="passenger-list">
-              {passengers.map(
-                (passenger, index) => (
-                  <div
-                    className="passenger-form"
-                    key={passenger.seat}
-                  >
-                    <div className="passenger-form-header">
-                      <div>
-                        <span className="passenger-number">
-                          Passenger {index + 1}
-                        </span>
-
-                        <h3>
-                          Seat {passenger.seat}
-                        </h3>
-                      </div>
-
-                      <div className="seat-tag">
-                        Seat {passenger.seat}
-                      </div>
+          <div className="passenger-list">
+            {passengers.map(
+              (passenger, index) => (
+                <article
+                  className="passenger-card"
+                  key={passenger.seat}
+                >
+                  <div className="passenger-card-header">
+                    <div className="passenger-number">
+                      {index + 1}
                     </div>
 
-                    <div className="form-grid">
-                      <div className="form-field full-width">
-                        <label>
-                          Full Name
-                        </label>
+                    <div>
+                      <h3>
+                        Passenger{" "}
+                        {index + 1}
+                      </h3>
 
-                        <div className="input-wrapper">
-                          <User size={17} />
+                      <span>
+                        Seat {passenger.seat}
+                      </span>
+                    </div>
+                  </div>
 
-                          <input
-                            type="text"
-                            placeholder="Enter passenger name"
-                            value={
-                              passenger.name
-                            }
-                            onChange={(event) =>
-                              updatePassenger(
-                                index,
-                                "name",
-                                event.target.value
-                              )
-                            }
-                          />
-                        </div>
+                  <div className="passenger-form">
+                    <div className="form-field full">
+                      <label>
+                        Full Name
+                      </label>
 
-                        {errors[
-                          `passenger-${index}-name`
-                        ] && (
-                          <small className="field-error">
-                            {
-                              errors[
-                                `passenger-${index}-name`
-                              ]
-                            }
-                          </small>
-                        )}
-                      </div>
-
-                      <div className="form-field">
-                        <label>
-                          Age
-                        </label>
+                      <div className="input-with-icon">
+                        <User size={17} />
 
                         <input
-                          type="number"
-                          min="1"
-                          max="120"
-                          placeholder="Age"
+                          type="text"
+                          placeholder="Enter full name"
                           value={
-                            passenger.age
+                            passenger.name
                           }
                           onChange={(event) =>
                             updatePassenger(
                               index,
-                              "age",
+                              "name",
                               event.target.value
                             )
                           }
                         />
-
-                        {errors[
-                          `passenger-${index}-age`
-                        ] && (
-                          <small className="field-error">
-                            {
-                              errors[
-                                `passenger-${index}-age`
-                              ]
-                            }
-                          </small>
-                        )}
                       </div>
 
-                      <div className="form-field">
-                        <label>
-                          Gender
-                        </label>
-
-                        <select
-                          value={
-                            passenger.gender
+                      {errors[
+                        `name-${index}`
+                      ] && (
+                        <small className="field-error">
+                          {
+                            errors[
+                              `name-${index}`
+                            ]
                           }
-                          onChange={(event) =>
-                            updatePassenger(
-                              index,
-                              "gender",
-                              event.target.value
-                            )
+                        </small>
+                      )}
+                    </div>
+
+                    <div className="form-field">
+                      <label>
+                        Age
+                      </label>
+
+                      <input
+                        type="number"
+                        min="1"
+                        max="120"
+                        placeholder="Age"
+                        value={
+                          passenger.age
+                        }
+                        onChange={(event) =>
+                          updatePassenger(
+                            index,
+                            "age",
+                            event.target.value
+                          )
+                        }
+                      />
+
+                      {errors[
+                        `age-${index}`
+                      ] && (
+                        <small className="field-error">
+                          {
+                            errors[
+                              `age-${index}`
+                            ]
                           }
-                        >
-                          <option value="">
-                            Select gender
-                          </option>
+                        </small>
+                      )}
+                    </div>
 
-                          <option value="Male">
-                            Male
-                          </option>
+                    <div className="form-field">
+                      <label>
+                        Gender
+                      </label>
 
-                          <option value="Female">
-                            Female
-                          </option>
+                      <select
+                        value={
+                          passenger.gender
+                        }
+                        onChange={(event) =>
+                          updatePassenger(
+                            index,
+                            "gender",
+                            event.target.value
+                          )
+                        }
+                      >
+                        <option value="">
+                          Select gender
+                        </option>
 
-                          <option value="Other">
-                            Other
-                          </option>
-                        </select>
+                        <option value="Male">
+                          Male
+                        </option>
 
-                        {errors[
-                          `passenger-${index}-gender`
-                        ] && (
-                          <small className="field-error">
-                            {
-                              errors[
-                                `passenger-${index}-gender`
-                              ]
-                            }
-                          </small>
-                        )}
-                      </div>
+                        <option value="Female">
+                          Female
+                        </option>
+
+                        <option value="Other">
+                          Other
+                        </option>
+                      </select>
+
+                      {errors[
+                        `gender-${index}`
+                      ] && (
+                        <small className="field-error">
+                          {
+                            errors[
+                              `gender-${index}`
+                            ]
+                          }
+                        </small>
+                      )}
                     </div>
                   </div>
-                )
-              )}
-            </div>
+                </article>
+              )
+            )}
           </div>
 
-          <div className="form-card">
-            <div className="form-card-header">
-              <div className="form-card-icon">
-                <Phone size={21} />
-              </div>
-
+          <div className="contact-section">
+            <div className="passenger-section-header">
               <div>
                 <span className="section-label">
-                  CONTACT DETAILS
+                  CONTACT INFORMATION
                 </span>
 
-                <h2>
-                  Booking contact
-                </h2>
+                <h2>Booking Contact</h2>
 
                 <p>
-                  Your ticket information will
-                  be sent here.
+                  We'll use these details for
+                  booking confirmation.
                 </p>
               </div>
             </div>
 
-            <div className="form-grid">
-              <div className="form-field">
-                <label>
-                  Mobile Number
-                </label>
-
-                <div className="input-wrapper">
-                  <Phone size={17} />
-
-                  <input
-                    type="tel"
-                    maxLength="10"
-                    placeholder="10-digit mobile number"
-                    value={contact.mobile}
-                    onChange={(event) =>
-                      updateContact(
-                        "mobile",
-                        event.target.value.replace(
-                          /\D/g,
-                          ""
-                        )
-                      )
-                    }
-                  />
-                </div>
-
-                {errors.mobile && (
-                  <small className="field-error">
-                    {errors.mobile}
-                  </small>
-                )}
-              </div>
-
+            <div className="contact-form">
               <div className="form-field">
                 <label>
                   Email Address
                 </label>
 
-                <div className="input-wrapper">
+                <div className="input-with-icon">
                   <Mail size={17} />
 
                   <input
@@ -523,53 +482,49 @@ function PassengerDetails() {
                   </small>
                 )}
               </div>
-            </div>
-          </div>
 
-          <div className="privacy-note">
-            <ShieldCheck size={19} />
+              <div className="form-field">
+                <label>
+                  Mobile Number
+                </label>
 
-            <div>
-              <strong>
-                Your information is secure
-              </strong>
+                <div className="input-with-icon">
+                  <Phone size={17} />
 
-              <p>
-                Passenger and contact details
-                are used only for processing
-                your booking.
-              </p>
+                  <input
+                    type="tel"
+                    maxLength="10"
+                    placeholder="10-digit mobile number"
+                    value={contact.phone}
+                    onChange={(event) =>
+                      updateContact(
+                        "phone",
+                        event.target.value.replace(
+                          /\D/g,
+                          ""
+                        )
+                      )
+                    }
+                  />
+                </div>
+
+                {errors.phone && (
+                  <small className="field-error">
+                    {errors.phone}
+                  </small>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <aside className="passenger-summary">
-          <div className="summary-header">
-            <div>
-              <span className="section-label">
-                JOURNEY SUMMARY
-              </span>
+        <aside className="booking-summary-card">
+          <div className="summary-card-header">
+            <span className="section-label">
+              BOOKING SUMMARY
+            </span>
 
-              <h2>
-                Booking Details
-              </h2>
-            </div>
-          </div>
-
-          <div className="summary-train">
-            <div className="summary-icon">
-              <TrainFront size={22} />
-            </div>
-
-            <div>
-              <strong>
-                {train.name}
-              </strong>
-
-              <span>
-                #{train.number}
-              </span>
-            </div>
+            <h2>Ticket Details</h2>
           </div>
 
           <div className="summary-route">
@@ -578,7 +533,7 @@ function PassengerDetails() {
               <strong>{from}</strong>
             </div>
 
-            <ArrowRight size={17} />
+            <ArrowRight size={18} />
 
             <div>
               <span>TO</span>
@@ -586,83 +541,91 @@ function PassengerDetails() {
             </div>
           </div>
 
-          <div className="summary-info-list">
+          <div className="summary-details">
             <div>
-              <span>Journey Date</span>
+              <span>Train</span>
+              <strong>
+                {train.name}
+              </strong>
+            </div>
+
+            <div>
+              <span>Train Number</span>
+              <strong>
+                #{train.number}
+              </strong>
+            </div>
+
+            <div>
+              <span>Date</span>
               <strong>{date}</strong>
             </div>
 
             <div>
               <span>Class</span>
               <strong>
-                {train.class || "3A"}
+                {seatClass}
               </strong>
             </div>
 
             <div>
               <span>Passengers</span>
               <strong>
-                {selectedSeats.length}
+                {passengers.length}
               </strong>
             </div>
 
             <div>
               <span>Seats</span>
-
               <strong>
-                {selectedSeats
-                  .slice()
-                  .sort(
-                    (a, b) => a - b
-                  )
-                  .join(", ")}
+                {seats.join(", ")}
               </strong>
             </div>
           </div>
 
-          <div className="fare-breakdown">
-            <div>
-              <span>
-                Ticket Fare
-              </span>
+          <div className="summary-divider"></div>
 
-              <strong>
-                ₹{totalFare}
-              </strong>
-            </div>
+          <div className="fare-row">
+            <span>Ticket Fare</span>
 
-            <div>
-              <span>
-                Service Charge
-              </span>
+            <strong>
+              ₹
+              {totalAmount - 20}
+            </strong>
+          </div>
 
-              <strong>
-                ₹{serviceCharge}
-              </strong>
-            </div>
+          <div className="fare-row">
+            <span>Convenience Fee</span>
 
-            <div className="fare-total">
-              <span>
-                Total Amount
-              </span>
+            <strong>
+              ₹20
+            </strong>
+          </div>
 
-              <strong>
-                ₹{finalAmount}
-              </strong>
-            </div>
+          <div className="fare-row total">
+            <span>Total Amount</span>
+
+            <strong>
+              ₹{totalAmount}
+            </strong>
           </div>
 
           <button
             className="continue-btn"
             onClick={handleContinue}
           >
-            Review Booking
+            Continue to Confirmation
+
             <ArrowRight size={18} />
           </button>
 
           <div className="secure-note">
-            <Check size={15} />
-            Secure booking experience
+            <ShieldCheck size={17} />
+
+            <span>
+              Your passenger information is
+              securely handled.
+            </span>
           </div>
         </aside>
       </section>
