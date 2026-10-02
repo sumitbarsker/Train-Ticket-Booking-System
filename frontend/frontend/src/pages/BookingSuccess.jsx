@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   CheckCircle2,
@@ -18,16 +17,7 @@ function BookingSuccess() {
   const train = location.state?.train;
   const seat = location.state?.seat;
   const passenger = location.state?.passenger;
-
-  const pnr = useMemo(() => {
-    return Math.floor(
-      1000000000 + Math.random() * 9000000000
-    ).toString();
-  }, []);
-
-  const bookingId = useMemo(() => {
-    return `RC${Date.now().toString().slice(-8)}`;
-  }, []);
+  const booking = location.state?.booking;
 
   const bookingDate = new Date().toLocaleDateString(
     "en-IN",
@@ -38,7 +28,7 @@ function BookingSuccess() {
     }
   );
 
-  if (!train || !seat || !passenger) {
+  if (!train || !seat || !passenger || !booking) {
     return (
       <main className="success-page">
         <div className="empty-state">
@@ -47,8 +37,7 @@ function BookingSuccess() {
           <h2>Booking details not found</h2>
 
           <p>
-            Please complete a booking before viewing the
-            ticket.
+            Please complete a booking before viewing the ticket.
           </p>
 
           <button
@@ -108,12 +97,12 @@ function BookingSuccess() {
           <div className="pnr-section">
             <div>
               <span>PNR NUMBER</span>
-              <strong>{pnr}</strong>
+              <strong>{booking.pnr}</strong>
             </div>
 
             <div>
               <span>BOOKING ID</span>
-              <strong>{bookingId}</strong>
+              <strong>{booking.booking_id}</strong>
             </div>
 
             <div>
@@ -130,7 +119,9 @@ function BookingSuccess() {
 
             <div className="route-middle">
               <span>{train.duration}</span>
+
               <div className="route-line"></div>
+
               <TrainFront size={20} />
             </div>
 
@@ -143,36 +134,34 @@ function BookingSuccess() {
           <div className="ticket-details">
             <div className="ticket-detail">
               <MapPin size={17} />
+
               <div>
                 <span>Train</span>
-                <strong>
-                  {train.name}
-                </strong>
+                <strong>{train.name}</strong>
               </div>
             </div>
 
             <div className="ticket-detail">
               <TrainFront size={17} />
+
               <div>
                 <span>Train Number</span>
-                <strong>
-                  {train.number}
-                </strong>
+                <strong>{train.number}</strong>
               </div>
             </div>
 
             <div className="ticket-detail">
               <User size={17} />
+
               <div>
                 <span>Passenger</span>
-                <strong>
-                  {passenger.name}
-                </strong>
+                <strong>{passenger.name}</strong>
               </div>
             </div>
 
             <div className="ticket-detail">
               <Armchair size={17} />
+
               <div>
                 <span>Seat / Class</span>
                 <strong>
@@ -183,6 +172,7 @@ function BookingSuccess() {
 
             <div className="ticket-detail">
               <CalendarDays size={17} />
+
               <div>
                 <span>Journey</span>
                 <strong>
@@ -193,21 +183,17 @@ function BookingSuccess() {
 
             <div className="ticket-detail">
               <MapPin size={17} />
+
               <div>
                 <span>Passenger Mobile</span>
-                <strong>
-                  {passenger.mobile}
-                </strong>
+                <strong>{passenger.mobile}</strong>
               </div>
             </div>
           </div>
 
           <div className="ticket-fare">
             <span>Total Fare</span>
-
-            <strong>
-              ₹{train.price}
-            </strong>
+            <strong>₹{booking.fare}</strong>
           </div>
         </div>
 
