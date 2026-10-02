@@ -13,6 +13,11 @@ router = APIRouter(
 )
 
 
+# Demo seat capacity for each train.
+# Later this can be moved into the database.
+DEFAULT_SEAT_CAPACITY = 60
+
+
 @router.get("/{train_id}")
 def get_seats(
     train_id: int,
@@ -52,13 +57,16 @@ def get_seats(
         for booking in bookings
     ]
 
+    available_seats = max(
+        DEFAULT_SEAT_CAPACITY - len(booked_seats),
+        0,
+    )
+
     return {
         "train_id": train.id,
         "train_name": train.name,
         "journey_date": journey_date,
-        "available_seats": max(
-            train.seats - len(booked_seats),
-            0,
-        ),
+        "total_seats": DEFAULT_SEAT_CAPACITY,
+        "available_seats": available_seats,
         "booked_seats": booked_seats,
     }
