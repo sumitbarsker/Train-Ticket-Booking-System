@@ -1,41 +1,32 @@
-price,duration_hours,available_seats,train_speed_score,comfort_score,recommendation_score
-450,4,55,8,7,91
-550,5,51,9,7,92
-600,5,48,9,8,89
-700,6,45,8,8,87
-750,7,42,7,8,82
-800,8,40,8,8,84
-850,8,38,8,8,83
-900,9,36,7,8,79
-950,9,34,7,9,78
-1000,10,32,6,8,73
-1050,10,30,6,8,71
-1100,8,28,9,9,85
-1200,7,25,10,9,94
-1250,8,22,9,9,91
-1300,9,20,8,8,82
-1400,6,27,10,10,96
-1450,7,24,10,10,95
-1500,8,18,9,9,88
-1600,6,15,10,10,93
-1800,5,12,10,10,90
-650,6,46,8,7,86
-720,7,39,7,8,81
-880,8,31,8,8,80
-980,9,29,7,8,76
-1150,10,21,6,7,70
-1350,7,26,9,9,89
-1550,6,19,10,10,92
-500,5,50,9,9,94
-760,8,37,8,8,84
-890,9,23,7,8,77
-620,6,44,9,8,90
-830,7,35,8,9,86
-920,8,30,8,8,81
-1080,9,27,7,9,79
-1180,7,32,9,9,90
-1280,8,24,9,9,87
-1380,6,29,10,10,95
-1480,7,17,10,10,91
-1580,5,14,10,10,94
-1700,6,11,10,9,88
+source,destination,train_type,train_class,price,duration_minutes,available_seats,total_seats
+Bhopal,New Delhi,Superfast,3A,1250,800,48,72
+Bhopal,New Delhi,Express,3A,1180,760,31,72
+Bhopal,New Delhi,Rajdhani,2A,1850,660,22,54
+Bhopal,Mumbai,Superfast,3A,1350,860,39,72
+Bhopal,Mumbai,Express,SL,620,795,55,72
+Bhopal,Indore,Superfast,CC,750,305,43,78
+Bhopal,Indore,Intercity,CC,680,315,61,78
+Bhopal,Jabalpur,Superfast,3A,890,375,36,72
+Bhopal,Jabalpur,Intercity,CC,720,375,49,78
+Bhopal,Chennai,Rajdhani,2A,2350,1350,18,54
+Bhopal,Chennai,Superfast,3A,1680,1760,27,72
+Bhopal,Jaipur,Express,3A,1320,795,42,72
+Indore,New Delhi,Superfast,3A,1450,900,35,72
+Indore,Mumbai,Express,SL,580,720,52,72
+Indore,Bhopal,Intercity,CC,680,315,58,78
+Jabalpur,Bhopal,Superfast,3A,890,375,40,72
+Jabalpur,New Delhi,Express,3A,1380,900,29,72
+Jabalpur,Mumbai,Superfast,3A,1550,1080,24,72
+New Delhi,Bhopal,Superfast,3A,1250,800,45,72
+New Delhi,Bhopal,Rajdhani,2A,1850,660,20,54
+New Delhi,Indore,Superfast,3A,1450,900,33,72
+New Delhi,Jabalpur,Express,3A,1380,900,38,72
+New Delhi,Jaipur,Superfast,CC,650,300,57,78
+Mumbai,Bhopal,Superfast,3A,1350,860,41,72
+Mumbai,Bhopal,Express,SL,620,795,49,72
+Mumbai,Indore,Express,SL,580,720,46,72
+Mumbai,Jabalpur,Superfast,3A,1550,1080,26,72
+Jaipur,Bhopal,Express,3A,1320,795,37,72
+Jaipur,New Delhi,Superfast,CC,650,300,62,78
+Chennai,Bhopal,Rajdhani,2A,2350,1350,16,54
+Chennai,Bhopal,Superfast,3A,1680,1760,30,72
