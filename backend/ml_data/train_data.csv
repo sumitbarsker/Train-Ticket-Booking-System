@@ -1,1 +1,33 @@
-
+source,destination,train_type,train_class,price,duration_minutes,available_seats,total_seats
+Bhopal,New Delhi,Superfast,3A,1450,865,48,72
+Bhopal,New Delhi,Superfast,SL,980,900,55,72
+Bhopal,New Delhi,Rajdhani,3A,1850,620,22,72
+Bhopal,New Delhi,Rajdhani,2A,2650,620,18,54
+Bhopal,New Delhi,Superfast,CC,1200,780,41,72
+Bhopal,Mumbai,Superfast,3A,1250,860,39,72
+Bhopal,Mumbai,Superfast,SL,850,900,61,72
+Bhopal,Mumbai,Superfast,2A,2100,860,24,54
+Bhopal,Mumbai,Superfast,CC,1050,820,45,72
+Bhopal,Indore,Superfast,CC,520,225,57,72
+Bhopal,Indore,Intercity,CC,480,245,41,72
+Bhopal,Indore,Express,SL,320,300,63,72
+Bhopal,Jabalpur,Intercity,CC,620,330,52,72
+Bhopal,Jabalpur,Superfast,3A,850,330,28,72
+Bhopal,Jabalpur,Express,SL,480,390,59,72
+Bhopal,Chennai,Rajdhani,3A,2100,1125,19,72
+Bhopal,Chennai,Rajdhani,2A,3200,1125,15,54
+Bhopal,Chennai,Superfast,3A,1750,1305,36,72
+Bhopal,Chennai,Superfast,SL,1150,1350,48,72
+Bhopal,Jaipur,Superfast,3A,1280,850,44,72
+Bhopal,Jaipur,Superfast,SL,890,900,58,72
+Bhopal,Jaipur,Superfast,2A,2150,850,21,54
+Indore,New Delhi,Superfast,3A,1520,900,38,72
+Indore,New Delhi,Superfast,SL,1020,940,52,72
+Indore,Mumbai,Superfast,3A,980,570,46,72
+Indore,Mumbai,Superfast,SL,690,600,60,72
+Jabalpur,New Delhi,Superfast,3A,1650,930,35,72
+Jabalpur,New Delhi,Superfast,SL,1100,970,49,72
+Jabalpur,Mumbai,Superfast,3A,1450,1080,31,72
+Jabalpur,Mumbai,Superfast,SL,950,1120,54,72
+Bhopal,Agra,Superfast,CC,720,540,46,72
+Bhopal,Lucknow,Superfast,3A,1180,720,37,72
