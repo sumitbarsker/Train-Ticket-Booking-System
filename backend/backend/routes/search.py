@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -33,17 +33,27 @@ def search_trains(
     journey_date: str,
     db: Session = Depends(get_db),
 ):
-    """
-    Search trains between two stations.
-
-    journey_date is currently accepted so the
-    frontend booking flow can pass the selected
-    travel date. Later, date-wise availability
-    can be stored separately in the database.
-    """
-
     clean_source = source.strip()
     clean_destination = destination.strip()
+    clean_date = journey_date.strip()
+
+    if not clean_source or not clean_destination:
+        raise HTTPException(
+            status_code=400,
+            detail="Source and destination are required.",
+        )
+
+    if not clean_date:
+        raise HTTPException(
+            status_code=400,
+            detail="Journey date is required.",
+        )
+
+    if clean_source.lower() == clean_destination.lower():
+        raise HTTPException(
+            status_code=400,
+            detail="Source and destination cannot be the same.",
+        )
 
     trains = (
         db.query(Train)
@@ -58,35 +68,16 @@ def search_trains(
     return {
         "source": clean_source,
         "destination": clean_destination,
-        "journey_date": journey_date,
+        "journey_date": clean_date,
         "count": len(trains),
-        "trains": [
-            format_train(train)
-            for train in trains
-        ],
+        "trains": [format_train(train) for train in trains],
     }
 
 
 @router.get("/stations")
-def get_stations(
-    db: Session = Depends(get_db),
-):
-    """
-    Return all unique source and destination
-    stations available in the database.
-    """
-
-    source_stations = (
-        db.query(Train.source)
-        .distinct()
-        .all()
-    )
-
-    destination_stations = (
-        db.query(Train.destination)
-        .distinct()
-        .all()
-    )
+def get_stations(db: Session = Depends(get_db)):
+    source_stations = db.query(Train.source).distinct().all()
+    destination_stations = db.query(Train.destination).distinct().all()
 
     stations = set()
 
